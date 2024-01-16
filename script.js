@@ -1,22 +1,44 @@
-// Get the source image to be edited
-let image = document.getElementById('sourceImage');
- 
-// Get the canvas for the edited image
-let canvas = document.getElementById('canvas');
- 
-// Get the 2D context of the image
-let context = canvas.getContext('2d');
+const image = document.getElementById('sourceImage');
+const canvas = document.getElementById('canvas');
+const context = canvas.getContext('2d');
  
 // Get all the sliders of the image
-let brightnessSlider = document.getElementById("brightnessSlider");
-let contrastSlider = document.getElementById("contrastSlider");
-let grayscaleSlider = document.getElementById("grayscaleSlider");
-let hueRotateSlider = document.getElementById("hueRotateSlider");
-let saturateSlider = document.getElementById("saturationSlider");
-let sepiaSlider = document.getElementById("sepiaSlider");
+const brightnessSlider = document.getElementById("brightnessSlider");
+const contrastSlider = document.getElementById("contrastSlider");
+const grayscaleSlider = document.getElementById("grayscaleSlider");
+const hueRotateSlider = document.getElementById("hueRotateSlider");
+const saturateSlider = document.getElementById("saturationSlider");
+const drawToggler = document.getElementById("drawToggler");
+const drawColor = document.getElementById("drawColor");
+const sepiaSlider = document.getElementById("sepiaSlider");
+
+let isDrawingEnabled = false;
+let currentDrawingColor = "#000";
+
+document.addEventListener("keydown", (e) => {
+	if (e.key === "e") {
+		toggleDrawing()
+	}
+
+	if (e.key === "r") {
+		resetImage();
+	}
+});
+
+drawToggler.addEventListener("click", () => toggleDrawing());
+drawColor.addEventListener("change", ({ target }) => {
+	currentDrawingColor = target.value;
+	consolidateDrawPaths();
+});
+// canvas.addEventListener("mouseup", () => consolidateDrawPaths()); //* <- esli nuzhno budet stop
+canvas.addEventListener("mousemove", (e) => {
+	if (isDrawingEnabled) {
+		draw(e);
+	}
+});
+
 
 function uploadImage(event) {
- 
     // Set the source of the image from the uploaded file
     image.src = URL.createObjectURL(event.target.files[0]);
  
@@ -115,13 +137,14 @@ function randomFilter() {
 
 // Reset all the slider values to there default values
 function resetImage() {
-    brightnessSlider.value = 100;
+		brightnessSlider.value = 100;
     contrastSlider.value = 100;
     grayscaleSlider.value = 0;
     hueRotateSlider.value = 0;
     saturateSlider.value = 100;
     sepiaSlider.value = 0;
     applyFilter();
+		resetDrawing();
 }
  
 function saveImage() {
@@ -147,3 +170,43 @@ function saveImage() {
     // Click on the link to start the download 
     linkElement.click();
 }
+
+function consolidateDrawPaths() {
+	if (isDrawingEnabled) {
+		context.beginPath();
+	}
+}
+
+function resetDrawing() {
+	consolidateDrawPaths();
+	isDrawingEnabled = false;
+	drawToggler.innerText = "Подключить кисть";
+}
+
+
+function toggleDrawing() {
+	if (isDrawingEnabled) {
+		drawToggler.innerText = "Подключить кисть";
+		isDrawingEnabled = false;
+	}
+	else {
+		drawToggler.innerText = "Отключить кисть";
+		isDrawingEnabled = true;
+	}
+}
+
+function draw(e) {
+	context.lineWidth = 5;
+	context.lineCap = "butt";
+	context.strokeStyle = currentDrawingColor;
+
+	let x = e.clientX - canvas.offsetLeft;
+	let y = e.clientY - canvas.offsetTop;
+	
+	context.lineTo(x, y);
+	context.stroke();
+
+	context.beginPath();
+	context.moveTo(x, y);
+}
+

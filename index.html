@@ -24,12 +24,10 @@
               Простой редактор изображений
             </span>
             <ul class="right image-save">
-                <button class="btn btn-flat blue white-text"
-                        onclick="saveImage()">
+                <button class="btn btn-flat blue white-text" onclick="saveImage()">
                   Сохранить
                 </button>
-                <button class="btn btn-flat red white-text"
-                        onclick="resetImage()">
+                <button class="btn btn-flat red white-text" onclick="resetImage()">
                   Очистить
                 </button>
             </ul>
@@ -44,7 +42,7 @@
  
         <!-- Canvas that will hold the 
         image to be edited -->
-        <canvas id="canvas" height="0"></canvas>
+        <canvas id="canvas" height="350" width="350"></canvas>
     </div>
     <div class="container app">
  
@@ -55,9 +53,17 @@
         </div>
  
         <!-- All the image controls that will be
-        used for modifying the image -->
-        <div class="image-controls">
-            <h6>Параметры</h6>
+					used for modifying the image -->
+					<div class="image-controls">
+						<h6>Параметры</h6>
+						<div class="draw-toolbar">
+							<button id="drawToggler" class="waves-effect waves-light btn">Подключить кисть</button>
+							<label>Выбрать цвет кисти
+								<input id="drawColor" type="color" />
+							</label>
+						</div>
+
+
             <div class="row">
                 <div class="col s6">
                     <span class="range-field">
